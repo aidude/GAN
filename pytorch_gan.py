@@ -54,4 +54,14 @@ class Generator(nn.Module):
 
 
 
+class Discriminator(nn.Module):
+	def __init__(self, input, hidden, output):
+        super(Discriminator, self).__init__()
+        self.map_01 = nn.Linear(input, hidden)
+        self.map_02 = nn.Linear(hidden, hidden)
+        self.map_03 = nn.Linear(hidden, output)
 
+    def forward(self, x):
+        x = F.elu(self.map_01(x))
+        x = F.elu(self.map_02(x))
+		return F.sigmoid(self.map_03(x))
