@@ -14,11 +14,13 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 import seaborn as sns
 
-sns.set(color_codes=True)
+# sns.set(color_codes=True)
 
-seed = 42
-np.random.seed(seed)
+# seed = 42
+# np.random.seed(seed)
 
+(name, preprocess, d_input_func) = ("Data and variances", lambda data: decorate_with_diffs(data, 2.0), lambda x: x * 2)
+print("Using data [%s]" % (name))
 
 
 class DataDistribution(object):
@@ -26,19 +28,13 @@ class DataDistribution(object):
         self.mu = 4
         self.sigma = 0.5
 
-    def sample(self, N):
-        samples = np.random.normal(self.mu, self.sigma, N)
-        samples.sort()
-        return samples
-
+    def sample(self):
+        return lambda n: torch.Tensor(np.random.normal(mu, sigma, (1, n))) # Gaussian
 
 class GeneratorDistribution(object):
-    def __init__(self, range):
-        self.range = range
-
-    def sample(self, N):
-        return np.linspace(-self.range, self.range, N) + \
-            np.random.random(N) * 0.01
+    
+    def sample(self):
+        return lambda m, n: torch.rand(m, n)
 
 class Generator(nn.Module):
 	def __init__(self, input, hidden, output):
@@ -65,3 +61,6 @@ class Discriminator(nn.Module):
         x = F.elu(self.map_01(x))
         x = F.elu(self.map_02(x))
 		return F.sigmoid(self.map_03(x))
+
+
+def model():
