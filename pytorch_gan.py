@@ -135,6 +135,14 @@ for epoch in range(num_epochs):
         g_error.backward()
 		g_optimizer.step() # Only optimizes G's parameters
 
+
+		if epoch % print_interval == 0:
+        print("%s: D: %s/%s G: %s (Real: %s, Fake: %s) " % (epoch,
+                                                            extract(d_real_error)[0],
+                                                            extract(d_fake_error)[0],
+                                                            extract(g_error)[0],
+                                                            stats(extract(d_real_data)),
+															stats(extract(d_fake_data))))
 # def model():
 
 
