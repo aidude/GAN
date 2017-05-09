@@ -122,6 +122,19 @@ for epoch in range(num_epochs):
         d_fake_error.backward()
 		d_optimizer.step() # Only optimizes D's parameters; changes based on stored gradients from backward()
 
+
+		for g_index in range(g_steps):
+        # 2. Train G on D's response (but DO NOT train D on these labels)
+        G.zero_grad()
+
+        gen_input = Variable(gi_sampler(minibatch_size, g_input_size))
+        g_fake_data = G(gen_input)
+        dg_fake_decision = D(preprocess(g_fake_data.t()))
+        g_error = criterion(dg_fake_decision, Variable(torch.ones(1)))  # we want to fool, so pretend it's all genuine
+
+        g_error.backward()
+		g_optimizer.step() # Only optimizes G's parameters
+
 # def model():
 
 
