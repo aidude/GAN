@@ -86,4 +86,27 @@ def extract_data():
 def stats(d):
 	return [np.mean(d), np.std(d)]
 
-def model():
+
+def decorate_with_diffs(data, exponent):
+    mean = torch.mean(data.data, 1)
+    mean_broadcast = torch.mul(torch.ones(data.size()), mean.tolist()[0][0])
+    diffs = torch.pow(data - Variable(mean_broadcast), exponent)
+    return torch.cat([data, diffs], 1)
+
+d_sampler = get_distribution_sampler(data_mean, data_stddev)
+gi_sampler = get_generator_input_sampler()
+G = Generator(input_size=gen_input_size, hidden_size=gen_hidden_size, output_size=gen_output_size)
+D = Discriminator(input_size=d_input_func(dis_input_size), hidden_size=dis_hidden_size, output_size=dis_output_size)
+criterion = nn.BCELoss()  # Binary cross entropy: http://pytorch.org/docs/nn.html#bceloss
+d_optimizer = optim.Adam(D.parameters(), lr=d_learning_rate, betas=optim_betas)
+g_optimizer = optim.Adam(G.parameters(), lr=g_learning_rate, betas=optim_betas)
+
+# def model():
+
+
+# def main():
+# 	model()
+
+
+# if __name__ == "__main__":
+# 	main()
